@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Label Editor – Rev 13</title>
+  <title>Label Editor – Rev 14</title>
   <style>
     * { box-sizing: border-box; }
     body {
@@ -60,6 +60,16 @@
       margin-bottom: 12px;
     }
 
+    .info-box {
+      background: #e8f4f8;
+      border: 1px solid #0078d4;
+      border-radius: 4px;
+      padding: 8px 12px;
+      margin-bottom: 12px;
+      font-size: 12px;
+      color: #005a9c;
+    }
+
     .layout {
       display: grid;
       grid-template-columns: 500px 1fr;
@@ -84,7 +94,7 @@
     .editor-wrapper {
       width: 500px;
       height: calc(500px * 812 / 1218);
-      border: 1px solid #ccc;
+      border: 2px solid #333;
       overflow: hidden;
       position: relative;
       background: #fff;
@@ -135,7 +145,7 @@
     }
 
     .preview-wrapper {
-      border: 1px solid #ccc;
+      border: 2px solid #333;
       border-radius: 4px;
       background: #fff;
       padding: 4px;
@@ -173,11 +183,16 @@
     </div>
   </div>
 
-  <div class="rev-label">Revision: <span id="revDisplay">13</span></div>
+  <div class="rev-label">Revision: <span id="revDisplay">14</span></div>
+
+  <div class="info-box">
+    ✓ Label: 6" × 4" (1218×812px) | Margin: <span id="marginDisplay">20</span>px | 
+    Cell size: <span id="cellSizeDisplay">393 × 257</span>px
+  </div>
 
   <p class="note">
     Horizontal merging only. Text auto‑fits per row (comfort fit ≈80% of row height).  
-    Typing is stable; editor only rebuilds on structural changes.
+    All grids automatically scale to fit your label—try any number of rows/columns!
   </p>
 
   <div class="layout">
@@ -198,7 +213,7 @@
 </div>
 
 <script>
-  let revision = 13;
+  let revision = 14;
 
   const LABEL_WIDTH = 1218;
   const LABEL_HEIGHT = 812;
@@ -218,6 +233,8 @@
   const editorGrid = document.getElementById('editorGrid');
   const previewContainer = document.getElementById('previewContainer');
   const revDisplay = document.getElementById('revDisplay');
+  const cellSizeDisplay = document.getElementById('cellSizeDisplay');
+  const marginDisplay = document.getElementById('marginDisplay');
 
   function initCells() {
     state.cells = [];
@@ -243,6 +260,13 @@
     const even = innerHeight / state.rows;
     state.rowHeights = Array(state.rows).fill(even);
     state.rowFontSizes = Array(state.rows).fill(20);
+  }
+
+  function updateInfoBox() {
+    const colWidth = Math.round((LABEL_WIDTH - state.margin * 2) / state.cols);
+    const rowHeight = Math.round((LABEL_HEIGHT - state.margin * 2) / state.rows);
+    cellSizeDisplay.textContent = `${colWidth} × ${rowHeight}`;
+    marginDisplay.textContent = state.margin;
   }
 
   function findHorizontalMergeAt(r, c) {
@@ -639,6 +663,7 @@
     initCells();
     initColWidths();
     initRowHeights();
+    updateInfoBox();
     autoFitAllRows();
     buildEditor();
     renderSvg();
@@ -695,6 +720,7 @@
     initCells();
     initColWidths();
     initRowHeights();
+    updateInfoBox();
     autoFitAllRows();
     buildEditor();
     renderSvg();
